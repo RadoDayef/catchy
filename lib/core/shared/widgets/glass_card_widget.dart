@@ -6,7 +6,7 @@ class GlassCardWidget extends StatelessWidget {
   final Widget child;
   final Color borderColor;
 
-  const GlassCardWidget({required this.title, required this.color, required this.borderColor, required this.child, super.key});
+  const GlassCardWidget({required this.title, required this.color, required this.child, required this.borderColor, super.key});
 
   @override
   Widget build(BuildContext context) {

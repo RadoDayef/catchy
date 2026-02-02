@@ -8,8 +8,11 @@ class CatchyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Catchy",
+      debugShowCheckedModeBanner: false,
+
       /// Bingo Example Screen
       home: BingoScreen(),
+
       /// SharedPreferences Example Screen
       // home: SharedPreferencesScreen(),
     );

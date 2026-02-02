@@ -12,6 +12,8 @@ class TextFieldWidget extends StatelessWidget {
     return TextField(
       controller: controller,
       cursorColor: Colors.cyan,
+      onSubmitted: (_) => FocusScope.of(context).unfocus(),
+      onTapOutside: (_) => FocusScope.of(context).unfocus(),
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: Icon(icon, color: Colors.cyan),
