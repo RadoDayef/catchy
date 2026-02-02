@@ -1,4 +1,6 @@
-import "package:catchy/core/shared/widgets/glass_card_widget.dart";
+import "package:catchy/core/shared/widgets/screens_button_widget.dart";
+import "package:catchy/core/shared/widgets/screens_header_widget.dart";
+import "package:catchy/core/shared/widgets/screens_operation_widget.dart";
 import "package:catchy/core/shared/widgets/text_field_widget.dart";
 import "package:flutter/material.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -8,136 +10,107 @@ class SharedPreferencesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Controllers for handling input
     final TextEditingController valueController = TextEditingController();
     final TextEditingController getKeyController = TextEditingController();
     final TextEditingController saveKeyController = TextEditingController();
     final TextEditingController deleteKeyController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.cyan[700],
-        title: Text(
-          "Shared Prefs",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      resizeToAvoidBottomInset: false,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.cyan[800]!, Colors.blueGrey[900]!]),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            // Section 1: Saving Data
-            GlassCardWidget(
-              title: "Save Data",
-              color: Colors.cyan[50]!,
-              borderColor: Colors.cyan[300]!,
-              child: Column(
-                children: [
-                  TextFieldWidget(hint: "Enter Key name...", icon: Icons.vpn_key, controller: saveKeyController),
-                  SizedBox(height: 12),
-                  TextFieldWidget(hint: "Enter value here...", icon: Icons.edit, controller: valueController),
-                  SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan[600], foregroundColor: Colors.white, padding: EdgeInsets.symmetric(vertical: 12)),
-                      onPressed: () async {
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        await prefs.setString(saveKeyController.text, valueController.text);
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                /// Header
+                ScreensHeaderWidget("Shared Prefs"),
 
-                        valueController.clear();
-                        saveKeyController.clear();
-                        print("Saved Successfully");
-                      },
-                      icon: Icon(Icons.save),
-                      label: Text("Save"),
-                    ),
+                /// Separator
+                SizedBox(height: 12),
+
+                /// Section 1: Add Data (The "Set String" function)
+                ScreensOperationWidget(
+                  title: "Set",
+                  icon: Icons.save,
+                  color: Colors.cyan,
+                  onPressed: () async {
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    await prefs.setString(saveKeyController.text, valueController.text);
+
+                    valueController.clear();
+                    saveKeyController.clear();
+                    print("Saved Successfully");
+                  },
+                  child: Column(
+                    children: [
+                      TextFieldWidget(hint: "Key...", icon: Icons.tag, controller: saveKeyController),
+                      SizedBox(height: 12),
+                      TextFieldWidget(hint: "Value...", icon: Icons.bolt, controller: valueController),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                /// Separator
+                SizedBox(height: 24),
+
+                /// Section 2: Retrieving Data (The "Get String" function)
+                ScreensOperationWidget(
+                  title: "Get",
+                  icon: Icons.data_object,
+                  color: Colors.green,
+                  onPressed: () async {
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    String? value = prefs.getString(getKeyController.text);
+
+                    getKeyController.clear();
+                    print("Value Is: $value");
+                  },
+                  child: TextFieldWidget(hint: "Key...", icon: Icons.radar, color: Colors.green, controller: getKeyController),
+                ),
+
+                /// Separator
+                SizedBox(height: 24),
+
+                /// Section 3: Delete Data (The "Remove" function)
+                ScreensOperationWidget(
+                  title: "Remove",
+                  icon: Icons.delete,
+                  color: Colors.deepOrange,
+                  onPressed: () async {
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    await prefs.remove(deleteKeyController.text);
+
+                    deleteKeyController.clear();
+                    print("Deleted Successfully");
+                  },
+                  child: TextFieldWidget(hint: "Key...", color: Colors.deepOrange, icon: Icons.auto_delete, controller: deleteKeyController),
+                ),
+
+                /// Separator
+                SizedBox(height: 24),
+
+                /// Section 4: Clear Data (The "Clear" function)
+                ScreensButtonWidget(
+                  title: "Clear",
+                  icon: Icons.delete_forever,
+                  onPressed: () async {
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    await prefs.clear();
+
+                    print("Cleared Successfully");
+                  },
+                  backgroundColor: Colors.red,
+                ),
+                SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+              ],
             ),
-            SizedBox(height: 24),
-
-            // Section 2: Retrieving Data
-            GlassCardWidget(
-              title: "Retrieve Data",
-              color: Colors.white,
-              borderColor: Colors.cyan[100]!,
-              child: Column(
-                children: [
-                  TextFieldWidget(hint: "Enter key to find...", icon: Icons.search, controller: getKeyController),
-                  SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.cyan),
-                        foregroundColor: Colors.cyan[800],
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      onPressed: () async {
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        String? value = prefs.getString(getKeyController.text);
-
-                        getKeyController.clear();
-                        print("Value Is: $value");
-                      },
-                      icon: Icon(Icons.download),
-                      label: Text("Get"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 24),
-
-            // Section 3: Delete Data
-            GlassCardWidget(
-              title: "Danger Zone",
-              color: Colors.red[50]!,
-              borderColor: Colors.red[200]!,
-              child: Column(
-                children: [
-                  TextFieldWidget(hint: "Key to delete...", icon: Icons.delete_sweep, controller: deleteKeyController),
-                  SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.orange[700], foregroundColor: Colors.white, padding: EdgeInsets.symmetric(vertical: 12)),
-                      onPressed: () async {
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        await prefs.remove(deleteKeyController.text);
-
-                        deleteKeyController.clear();
-                        print("Deleted Successfully");
-                      },
-                      icon: Icon(Icons.delete),
-                      label: Text("Delete"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 24),
-
-            // Section 4: Clear Data
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], foregroundColor: Colors.white, padding: EdgeInsets.symmetric(vertical: 12)),
-                onPressed: () async {
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  await prefs.clear();
-
-                  print("Cleared Successfully");
-                },
-                icon: Icon(Icons.delete_forever),
-                label: Text("Clear All"),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

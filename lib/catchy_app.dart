@@ -1,4 +1,5 @@
-import 'package:catchy/features/bingo/ui/bingo_screen.dart';
+import 'package:catchy/core/routing/route_names.dart';
+import 'package:catchy/core/routing/routing.dart';
 import 'package:flutter/material.dart';
 
 class CatchyApp extends StatelessWidget {
@@ -6,15 +7,6 @@ class CatchyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Catchy",
-      debugShowCheckedModeBanner: false,
-
-      /// Bingo Example Screen
-      home: BingoScreen(),
-
-      /// SharedPreferences Example Screen
-      // home: SharedPreferencesScreen(),
-    );
+    return MaterialApp(title: "Catchy", routes: Routing.routes, debugShowCheckedModeBanner: false, initialRoute: RouteNames.home.name);
   }
 }
